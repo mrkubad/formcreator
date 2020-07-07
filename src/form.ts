@@ -5,10 +5,13 @@ import DateField from './fields/dateField';
 import SelectField from './fields/selectField';
 import CheckboxField from './fields/checkboxField';
 import TextAreaField from './fields/textareaField';
+import LocalStorage from './storage/localStorage';
+import App from './app';
 
 
 export default class Form {
     fields: IField[];
+
 
     constructor() {
         this.fields = [
@@ -37,5 +40,31 @@ export default class Form {
         for(let field of this.fields){
             field.render();
         }
+
+        let saveButton: HTMLButtonElement = document.createElement("button");
+        let backButton: HTMLButtonElement = document.createElement("button");
+
+        saveButton.innerText = "Zapisz";
+        saveButton.type = "button";
+        saveButton.classList.add("btn", "btn-primary");
+        saveButton.addEventListener("click", (e) => {this.save(e)})
+        backButton.innerText = "Wstecz";
+        backButton.type = "button";
+        backButton.classList.add("btn", "btn-info");
+        backButton.addEventListener("click", (e) => {this.back(e)});
+
+        App.getRenderTarget().appendChild(saveButton);
+        App.getRenderTarget().appendChild(backButton);
+    }
+
+    save(e: Event):void {
+        console.log("Zapisuję");
+        const storage: LocalStorage = new LocalStorage();
+        storage.saveDocument(this);
+        
+        App.moveToPage("/index.html");
+    }
+    back(e: Event): void {
+       App.moveToPage("/index.html");
     }
 }
