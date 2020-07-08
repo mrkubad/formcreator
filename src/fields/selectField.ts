@@ -15,7 +15,7 @@ export default class SelectField extends FieldBase {
         this.type = FieldType.Select;
     }
 
-    render = (): void => {
+    render = (parrent?: HTMLElement): void => {
         
         let parrentDiv: HTMLDivElement = document.createElement("div");
         parrentDiv.classList.add("form-group");
@@ -24,12 +24,16 @@ export default class SelectField extends FieldBase {
         let currentElement: HTMLSelectElement = document.createElement("select");
         currentElement.classList.add("form-control");
         currentElement.id = this.name + this.id;
-
+        let i:number = 0;
         for(let option of this.options){
             let optionElement: HTMLOptionElement = document.createElement("option");
             optionElement.value = option;
             optionElement.innerText = option;
             currentElement.options.add(optionElement);
+            if(option === this.value) {
+                currentElement.selectedIndex = i;
+            }
+            i++;
         }
 
         this.bindEventListener(currentElement);
@@ -41,7 +45,12 @@ export default class SelectField extends FieldBase {
         parrentDiv.appendChild(label);
         parrentDiv.appendChild(currentElement);
 
-
-        this.getRenderContainer().appendChild(parrentDiv);
+        if(parrent) {
+            parrent.appendChild(parrentDiv);
+        }
+        else {
+            this.getRenderContainer().appendChild(parrentDiv);
+        }
+        
     }
 }

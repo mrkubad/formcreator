@@ -13,7 +13,7 @@ export default class CheckboxField extends FieldBase {
         this.type = FieldType.Checkbox;
     }
 
-    render = (): void => {
+    render = (parrent?: HTMLElement): void => {
         let parrentDiv: HTMLDivElement = document.createElement("div");
 
         parrentDiv.classList.add("form-check");
@@ -34,7 +34,11 @@ export default class CheckboxField extends FieldBase {
         parrentDiv.appendChild(currentElement);
         parrentDiv.appendChild(label);
         
-
-        this.getRenderContainer().appendChild(parrentDiv);
+        if(parrent){
+            parrent.appendChild(parrentDiv);
+        }
+        else {
+            this.getRenderContainer().appendChild(parrentDiv);
+        }
     }
 }

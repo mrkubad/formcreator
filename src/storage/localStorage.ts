@@ -6,10 +6,31 @@ export default class LocalStorage implements IDataStorage {
         localStorage.setItem(fileName, JSON.stringify(document));
         return fileName;
     }
-    loadDocument(id: string): Object {
+    updateDocument(id: string, document: any): void {
+        localStorage.removeItem(id);
+        localStorage.setItem(id, JSON.stringify(document));
+    }
+    loadDocument(id: string): Object[]{
         return JSON.parse(localStorage.getItem(id));
     }
     getDocuments(): string[] {
-        return Object.keys(localStorage);
+        return Object.keys(localStorage).filter(s => s.includes("document"));
+    }
+    removeDocument(id: string): void {
+        localStorage.removeItem(id);
+    }
+    getForms(): string[] {
+        return Object.keys(localStorage).filter(s => s.includes("form"));
+    }
+    saveForm(form: any): string {
+        const fileName: string = `form-${Date.now().toString()}`;
+        localStorage.setItem(fileName, JSON.stringify(form));
+        return fileName;
+    }
+    loadForm(id: string): Object[] {
+        return this.loadDocument(id);
+    }
+    updateForm(id: string, form: any): void {
+        return this.updateDocument(id, form);
     }
 }

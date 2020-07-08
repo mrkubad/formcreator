@@ -15,7 +15,7 @@ export default class TextAreaField extends FieldBase {
         this.type = FieldType.TextArea;
     }
 
-    render = (): void  => {
+    render = (parrent?: HTMLElement): void  => {
 
         let parrentDiv: HTMLDivElement = document.createElement("div");
         parrentDiv.classList.add("form-group");
@@ -35,6 +35,11 @@ export default class TextAreaField extends FieldBase {
         parrentDiv.appendChild(label);
         parrentDiv.appendChild(currentElement);
 
-        this.getRenderContainer().appendChild(parrentDiv);
+        if(parrent){
+            parrent.appendChild(parrentDiv);
+        }
+        else {
+            this.getRenderContainer().appendChild(parrentDiv);
+        }
     };
 }

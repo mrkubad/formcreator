@@ -18,7 +18,7 @@ export default class InputField extends FieldBase {
         this.type = FieldType.Text;
     }
 
-    render = (): void => {
+    render = (parrent?: HTMLElement): void => {
         const placeholderExists: boolean = this.placeholderText.length > 0;
         const hintExists: boolean = this.hintText.length > 0; 
 
@@ -29,6 +29,7 @@ export default class InputField extends FieldBase {
         currentElement.id = this.name + this.id;
         currentElement.classList.add("form-control");
         currentElement.type = this.type;
+        currentElement.value = this.value;
 
 
         let label: HTMLLabelElement = document.createElement("label");
@@ -50,8 +51,13 @@ export default class InputField extends FieldBase {
             parrentDiv.appendChild(hintElement);
         }
 
-        this.getRenderContainer().appendChild(parrentDiv);
-        
+        if(parrent) {
+            parrent.appendChild(parrentDiv);
+        }
+        else {
+            this.getRenderContainer().appendChild(parrentDiv);
+        }
+    
         this.bindEventListener(currentElement); // on change, will change value
     }
 }
