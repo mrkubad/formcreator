@@ -6,6 +6,6 @@ export default interface IField {
 	type: FieldType;
 	value: string;
 	id: number;
-	render: () => void;
+	render: (target: HTMLElement) => void;
 	getValue: () => string;
 };

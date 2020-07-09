@@ -6,20 +6,22 @@ import TextAreaField from "../fields/textareaField";
 import SelectField from "../fields/selectField";
 import CheckboxField from "../fields/checkboxField";
 import IField from "../interfaces/iField";
+import App from "../app";
 
 export default class FieldEditorDialog {
     fieldType: FieldType;
-    previousContainer: HTMLElement;
+    previousTargetChilds: Node[];
+    currentContainer: HTMLElement;
     createdFields: IField[];
 
     constructor(type: FieldType, createdFields?: IField[]) {
+        this.previousTargetChilds = [];
         this.fieldType = type;
         this.createdFields = createdFields;
     }
     save(e: Event, name: string, labelText: string, defaultValue: string): void {
-        console.log(this.fieldType);
-
-        let newField = undefined;
+       
+        let newField: IField = null;
         switch(this.fieldType){
             case FieldType.Email:
                 newField =  new EmailField(name, labelText, defaultValue);
@@ -44,46 +46,58 @@ export default class FieldEditorDialog {
             }
         }
         this.createdFields.push(newField);
-        newField.render(this.previousContainer);
+        newField.render(App.getRenderTarget());
         this.close();
-        console.log("whocho");
+        console.log(`Created field of type ${newField.type}`);
     }
     close():void {
-        document.body = this.previousContainer;
+        // clean and restore old childs
+        this.currentContainer.innerHTML = "";
+        for(const child of this.previousTargetChilds) {
+            this.currentContainer.appendChild(child);
+        }
     }
+    private cleanAndSaveTargetContent(target: HTMLElement): void {
+        while(target.firstChild) {
+            this.previousTargetChilds.push(target.removeChild(target.firstChild));
+        }
+    } 
 
-    render(): void {
-        const parrentDiv: HTMLDivElement =  document.createElement("div");
-        const confirmButton: HTMLButtonElement = document.createElement("button");
+    render(parrent: HTMLElement): void {
+        this.currentContainer = parrent;
+        this.cleanAndSaveTargetContent(parrent);
+
+        const confirmButton = this.createEmptyButton();
+        confirmButton.classList.add("btn-info", "btn-space-right");
         confirmButton.innerText = "Confirm";
-       
+        this.currentContainer.appendChild(confirmButton);
 
-        const cancelButton: HTMLButtonElement = document.createElement("button");
-        cancelButton.innerText = "Cancel";
-        cancelButton.addEventListener("click", () => {this.close();})
+        const closeButton = this.createEmptyButton();
+        closeButton.classList.add("btn-dark", "btn-space-left");
+        closeButton.innerText = "Cancel";
+        closeButton.addEventListener("click", () => {this.close()});
+        this.currentContainer.appendChild(closeButton);
 
-        const nameInput = new InputField("inputname", "Input name");
-        const textLabel = new InputField("labelText", "Input label text");
 
+        const nameInput = new InputField("inputname", "Field name: ");
+        const textLabel = new InputField("labeltext", "Label text: ");
 
-      
-        const fieldDefaultVelue = new InputField("fieldValue", this.fieldType == FieldType.Select ? "; separated options" : "Input default value (leave empty if none)");
+        const defaultValue = new InputField("defaultValue", this.fieldType == FieldType.Select ? "Options(separated with \";\"):" : this.fieldType == FieldType.Checkbox ? "Input default state(\"true\" or \"false\"):" : "Input default value (leave empty if none)", "", this.fieldType == FieldType.Date ? "YYYY-MM-DD" : "");
+        
 
         confirmButton.addEventListener("click", (e) => {
-            this.save(e, nameInput.getValue(), textLabel.getValue(), fieldDefaultVelue.getValue());
+            this.save(e, nameInput.getValue(), textLabel.getValue(), defaultValue.getValue());
         });
 
-        this.previousContainer = document.body;
-        console.log(this.previousContainer);
-        document.body = document.createElement("body");
+        nameInput.render(this.currentContainer);
+        textLabel.render(this.currentContainer);
+        defaultValue.render(this.currentContainer);
+    }
 
-        document.body.appendChild(parrentDiv);
-
-        nameInput.render(parrentDiv);
-        textLabel.render(parrentDiv);
-        fieldDefaultVelue.render(parrentDiv);
-
-        document.body.appendChild(confirmButton);
-        document.body.appendChild(cancelButton);
+    private createEmptyButton(): HTMLButtonElement {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.classList.add("btn");
+        return button;
     }
 }

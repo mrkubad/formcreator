@@ -1,5 +1,24 @@
 @import "~bootstrap/scss/bootstrap";
 
 body {
-  background: lightblue;
+  background: whitesmoke;
 }
+
+.btn-space-left {
+  margin-left: 5px;
+}
+
+.btn-space-right {
+  margin-right: 5px;
+}
+
+.div-btn-holder {
+  border: solid 1px;
+  border-radius: 6px;
+  padding: 5px 0px 5px 5px;
+  margin: 10px 0px 10px 0px;
+}
+.btn-field-type {
+  margin: 0px 1px;
+}
+
